@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CollectionIdMutability;
 
+@ToString
 @Entity
 @Table(name="comment")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
