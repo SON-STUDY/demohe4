@@ -3,6 +3,7 @@ package com.example.demohe4.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+@ToString
 @Entity
 @Table(name="post")
 @Getter @Setter

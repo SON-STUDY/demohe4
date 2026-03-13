@@ -5,6 +5,8 @@ import com.example.demohe4.domain.Post;
 import com.example.demohe4.domain.User;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 public class JpaMain {
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("demohe4");
@@ -14,7 +16,8 @@ public class JpaMain {
 
         try{
             Save(tx, em);
-            getPost(em,1L);
+            query(em,tx,1L);
+            //getPost(em,1L);
         }catch (Exception e){
             tx.rollback();  
         }finally {
@@ -44,5 +47,26 @@ public class JpaMain {
     public static void getPost(EntityManager em, Long postId){
         Post post=em.find(Post.class, postId);
         System.out.println("조회된 게시글 제목 : " + post.getTitle());
+    }
+
+    public static void query(EntityManager em, EntityTransaction tx, Long userId) {
+        tx.begin();
+        User user = em.find(User.class, userId);
+        System.out.println("print : " + user.toString());
+        List<Post> postList = em.createQuery("select p from Post p where p.user.id=:userId", Post.class).setParameter("userId", userId).getResultList();
+        List<Post> postList2 = em.createQuery("select p from Post p where p.title=:title and p.content=:content", Post.class).setParameter("title", "제목").setParameter("content", "내용입니다~~").getResultList();
+        for (Post post : postList2) {
+            System.out.println(post.toString());
+            List<Comment> commentList = em.createQuery("select c from Comment c where c.post.title=:postTitle", Comment.class).setParameter("postTitle", post.getTitle()).getResultList();
+            /*
+            Query 내부에서 객체로 조회할 때, id 값 처럼 객체의 필드로 찾아 낼 수도 있고, Entity 관점에서 직접 Entity로도 찾아 낼 수 있음
+             */
+            for (Comment comment : commentList) {
+                System.out.println(comment.toString());
+            }
+        }
+
+
+        tx.commit();
     }
 }
